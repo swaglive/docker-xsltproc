@@ -13,7 +13,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: []
+        version:
+        - 1.1.38
 
     steps:
     - name: Checkout
@@ -29,6 +30,11 @@ jobs:
 
         echo "repo-owner=${{ github.repository_owner }}" >> $GITHUB_OUTPUT
         echo "repo-name=${GITHUB_REPOSITORY#*/docker-}" >> $GITHUB_OUTPUT
+    
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+      with:
+        platforms: linux/amd64, linux/arm64
 
     - name: Setup - Setup buildx
       uses: docker/setup-buildx-action@v2
@@ -63,6 +69,7 @@ jobs:
       id: build
       with:
         context: .
+        platforms: linux/amd64,linux/arm64
         build-args: |
           version=${{ matrix.version }}
         push: true
